@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: fadedstarboy/ultimate-cicd:1
+        image: algabrizaid/maven-opa-docker-agent:1
         ports:
         - containerPort: 8080
