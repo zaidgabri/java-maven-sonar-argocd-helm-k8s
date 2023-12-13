@@ -49,61 +49,85 @@ pipeline {
             GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
             GIT_USER_NAME = "zaidgabri"
         }
-   steps {
-                script {
+        steps {
+            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                sh '''
+                    git config user.email "zaidgabri976@gmail.com"
+                    git config user.name "zaidgabri"
+                    BUILD_NUMBER=${imageTag}
+                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                '''
+            }
+        }
+    }
+
+
+
+
+  //   stage('Update Deployment File') {
+  //       environment {
+  //           GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
+  //           GIT_USER_NAME = "zaidgabri"
+  //       }
+  //  steps {
+  //               script {
                   
-                    def cloneDir = 'java-maven-sonar-argocd-helm-k8s'
+  //                   def cloneDir = 'java-maven-sonar-argocd-helm-k8s'
 
                   
-                    if (!fileExists(cloneDir)) {
-                        sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
-                    }
+  //                   if (!fileExists(cloneDir)) {
+  //                       sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
+  //                   }
 
                    
-                    def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
+  //                   def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
 
                   
                     
-                    def newImageLine = "image: ${registryName}:${imageTag}"
+  //                   def newImageLine = "image: ${registryName}:${imageTag}"
             
-                    sh "sed -i 's#image:algabrizaid/maven-opa-docker-agent:latest.*|${newImageLine}|'${manifestsDir}/deployment.yml"
+  //                   sh "sed -i 's|image:algabrizaid/maven-opa-docker-agent:latest.*|${newImageLine}|'${manifestsDir}/deployment.yml"
         
-            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+  //           withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
 
-                 dir(cloneDir) {
-                            sh "git config user.email zaidgabri976@gmail.com"
-                            sh "git config user.name zaidgabri"
-                            sh "git add ."
-                            sh "git commit -m 'Update image tag in Kubernetes manifests'"
-                            sh "git push  git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main"
-                        }
-                    }
-                    sh "rm -rf ${cloneDir}"
+  //                dir(cloneDir) {
+  //                           sh "git config user.email zaidgabri976@gmail.com"
+  //                           sh "git config user.name zaidgabri"
+  //                           sh "git add ."
+  //                           sh "git commit -m 'Update image tag in Kubernetes manifests'"
+  //                           sh "git push  git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main"
+  //                       }
+  //                   }
+  //                   sh "rm -rf ${cloneDir}"
 
 
 
                  
-            //     // Checkout the branch (assuming it's 'main' - adjust if necessary)
-            //     sh 'git checkout main'
+  //           //     // Checkout the branch (assuming it's 'main' - adjust if necessary)
+  //           //     sh 'git checkout main'
 
-            //     // Update the deployment file with the new image tag
-            //     sh '''
-            //         git config user.email "zaidgabri976@gmail.com"
-            //         git config user.name "zaidgabri"
-            //         BUILD_NUMBER=${BUILD_NUMBER}
-            //         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-            //         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-            //         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-            //         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
-            //     '''
-            // }
-            // sh "rm -rf ${cloneDir}"
+  //           //     // Update the deployment file with the new image tag
+  //           //     sh '''
+  //           //         git config user.email "zaidgabri976@gmail.com"
+  //           //         git config user.name "zaidgabri"
+  //           //         BUILD_NUMBER=${BUILD_NUMBER}
+  //           //         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+  //           //         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+  //           //         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+  //           //         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
+  //           //     '''
+  //           // }
+  //           // sh "rm -rf ${cloneDir}"
               
             
             
-        }
-    }
-  }
+  //       }
+  //   }
+  // }
+
 }
 }
 
