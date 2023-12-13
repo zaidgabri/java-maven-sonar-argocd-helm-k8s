@@ -1,10 +1,11 @@
 pipeline {
   agent any
-  stages {
-
-      environment {
+   environment {
         PATH = "${tool 'Maven'}/bin:${env.PATH}"
     }
+  stages {
+
+   
     
     stage('Build and Test') {
       steps {
