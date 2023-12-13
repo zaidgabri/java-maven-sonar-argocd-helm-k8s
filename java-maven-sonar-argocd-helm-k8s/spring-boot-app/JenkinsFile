@@ -1,7 +1,11 @@
 pipeline {
   agent any
+
+
    environment {
         PATH = "${tool 'Maven'}/bin:${env.PATH}"
+       registryName = 'algabrizaid/maven-opa-docker-agent'
+         imageTag = "${BUILD_NUMBER}"
     }
   stages {
 
@@ -45,35 +49,62 @@ pipeline {
             GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
             GIT_USER_NAME = "zaidgabri"
         }
-        steps {
-            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                 script {
-                // Checkout the branch (assuming it's 'main' - adjust if necessary)
-                sh 'git checkout main'
+   steps {
+                script {
+                  
+                    def cloneDir = 'java-maven-sonar-argocd-helm-k8s'
 
-                // Update the deployment file with the new image tag
-                sh '''
-                    git config user.email "zaidgabri976@gmail.com"
-                    git config user.name "zaidgabri"
-                    BUILD_NUMBER=${BUILD_NUMBER}
-                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                    git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
-                '''
-            }
+                  
+                    if (!fileExists(cloneDir)) {
+                        sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
+                    }
+
+                   
+                    def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
+
+                  
+                    
+                    def newImageLine = "image: ${registryName}:${imageTag}"
+            
+                    sh "sed -i 's|image: algabrizaid/maven-opa-docker-agent:${newImageLine}|' ${manifestsDir}/api-deployment.yml"
+        
+            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+
+                 dir(cloneDir) {
+                            sh "git config user.email zaidgabri976@gmail.com"
+                            sh "git config user.name zaidgabri"
+                            sh "git add ."
+                            sh "git commit -m 'Update image tag in Kubernetes manifests'"
+                            sh "git push  git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main"
+                        }
+                    }
+                    sh "rm -rf ${cloneDir}"
+
+
+
+                 
+            //     // Checkout the branch (assuming it's 'main' - adjust if necessary)
+            //     sh 'git checkout main'
+
+            //     // Update the deployment file with the new image tag
+            //     sh '''
+            //         git config user.email "zaidgabri976@gmail.com"
+            //         git config user.name "zaidgabri"
+            //         BUILD_NUMBER=${BUILD_NUMBER}
+            //         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+            //         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+            //         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+            //         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
+            //     '''
+            // }
+            // sh "rm -rf ${cloneDir}"
               
-                // sh '''
-                //     git config user.email "zaidgabri976@gmail.com"
-                //     git config user.name "zaidgabri"
-                //     BUILD_NUMBER=${BUILD_NUMBER}
-                //     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                //     git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                //     git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                // //     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                // '''
-            }
+            
+            
         }
     }
   }
 }
+}
+
+
