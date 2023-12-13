@@ -5,7 +5,7 @@ pipeline {
    environment {
         PATH = "${tool 'Maven'}/bin:${env.PATH}"
        registryName = 'algabrizaid/maven-opa-docker-agent'
-         imageTag = "${BUILD_NUMBER}"
+         imageTag = "latest-${BUILD_NUMBER}"
     }
   stages {
 
@@ -30,7 +30,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       environment {
-        DOCKER_IMAGE = "algabrizaid/maven-opa-docker-agent:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "algabrizaid/maven-opa-docker-agent:${imageTag}"
         DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('dockerhub')
       }
@@ -66,7 +66,7 @@ pipeline {
                     
                     def newImageLine = "image: ${registryName}:${imageTag}"
             
-                    sh "sed -i 's|image: algabrizaid/maven-opa-docker-agent:${newImageLine}|' ${manifestsDir}/deployment.yml"
+                    sh "sed -i 's|image:algabrizaid/maven-opa-docker-agent:latest.*|${newImageLine}|'${manifestsDir}/deployment.yml"
         
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
 
