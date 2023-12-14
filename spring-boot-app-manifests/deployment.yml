@@ -28,7 +28,7 @@ metadata:
   namespace: mciroservice-project
 
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: http
     port: 80
