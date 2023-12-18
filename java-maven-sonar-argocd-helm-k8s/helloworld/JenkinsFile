@@ -64,6 +64,7 @@ stage('Update Deployment File') {
 
             // Checkout the specified branch
             sh "git checkout ${branchName}"
+             sh "git pull"
 
             def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
             def newImageLine = "image: ${registryName}:${imageTag}"
@@ -77,7 +78,7 @@ stage('Update Deployment File') {
                     sh "git add ."
 
                     sh "git commit -m 'Update image tag in Kubernetes manifests'"
-                     sh "git pull"
+
                     sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${branchName}"
                 }
             }
