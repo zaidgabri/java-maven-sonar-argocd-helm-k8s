@@ -1,38 +1,63 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: spring-boot-app
-  namespace: mciroservice-project
-  labels:
-    app: spring-boot-app
+  name: mysql-pvc
 spec:
-  replicas: 2
+  resources:
+    requests:
+      storage: 256Mi
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
   selector:
     matchLabels:
-      app: spring-boot-app
+      app: mysql
+  serviceName: mysql
+  replicas: 1
   template:
     metadata:
       labels:
-        app: spring-boot-app
+        app: mysql
     spec:
       containers:
-      - name: spring-boot-app
-        image: algabrizaid/maven-opa-docker-agent:latest-32
-        ports:
-        - containerPort: 8080
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: ENSA2023
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb-cm
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-boot-app-service
-  namespace: mciroservice-project
-
+  name: mysql
 spec:
-  type: LoadBalancer
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8080
-    protocol: TCP
   selector:
-    app: spring-boot-app
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: LoadBalancer  # Change the service type to LoadBalancer
