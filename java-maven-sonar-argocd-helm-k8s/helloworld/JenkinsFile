@@ -4,7 +4,7 @@ pipeline {
 
    environment {
         PATH = "${tool 'Maven'}/bin:${env.PATH}"
-        registryName = 'algabrizaid/maven-opa-docker-agent'
+        registryName = 'algabrizaid/mysql-springboot-azure'
          imageTag = "latest-${BUILD_NUMBER}"
     }
   stages {
@@ -30,7 +30,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       environment {
-        DOCKER_IMAGE = "algabrizaid/maven-opa-docker-agent:${imageTag}"
+        DOCKER_IMAGE = "algabrizaid/mysql-springboot-azure:${imageTag}"
         DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/helloworld/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('dockerhub')
       }
@@ -69,7 +69,7 @@ pipeline {
                     
                     def newImageLine = "image: ${registryName}:${imageTag}"
             
-                    sh "sed -i 's|image: algabrizaid/maven-opa-docker-agent:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
+                    sh "sed -i 's|image: algabrizaid/mysql-springboot-azure:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
         
             withCredentials([usernamePassword(credentialsId: 'git',passwordVariable: 'GIT_PASSWORD' , usernameVariable: 'GIT_USERNAME')]) {
 
