@@ -47,41 +47,38 @@ pipeline {
 
 
     
-    stage('Update Deployment File') {
-        environment {
-            GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
-            GIT_USER_NAME = "zaidgabri"
-        }
-   steps {
-                script {
-                  
-                    def cloneDir = 'java-maven-sonar-argocd-helm-k8s'
+stage('Update Deployment File') {
+    environment {
+        GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
+        GIT_USER_NAME = "zaidgabri"
+    }
+    steps {
+        script {
+            def cloneDir = 'java-maven-sonar-argocd-helm-k8s'
+            def branchName = 'main' // Change this to the branch you want to work with
 
-                  
-                    if (!fileExists(cloneDir)) {
-                        sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
-                    }
+            if (!fileExists(cloneDir)) {
+                sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
+            }
 
-                   
-                    def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
+            // Checkout the specified branch
+            sh "git checkout ${branchName}"
 
-                  
-                    
-                    def newImageLine = "image: ${registryName}:${imageTag}"
-            
-                    sh "sed -i 's|image: algabrizaid/mysql-springboot-azure:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
-        
-            withCredentials([usernamePassword(credentialsId: 'git',passwordVariable: 'GIT_PASSWORD' , usernameVariable: 'GIT_USERNAME')]) {
+            def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
+            def newImageLine = "image: ${registryName}:${imageTag}"
 
-                 dir(cloneDir) {
-                            sh "git config user.email zaidgabri976@gmail.com"
-                            sh "git config user.name zaidgabri"
-                            sh "git add ."
-                            sh "git commit -m 'Update image tag in Kubernetes manifests'"
-                             sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git HEAD:main"
-                          }
-                    }
-                    sh  "rm -rf ${cloneDir}"
+            sh "sed -i 's|image: algabrizaid/mysql-springboot-azure:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
+
+            withCredentials([usernamePassword(credentialsId: 'git', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                dir(cloneDir) {
+                    sh "git config user.email zaidgabri976@gmail.com"
+                    sh "git config user.name zaidgabri"
+                    sh "git add ."
+                    sh "git commit -m 'Update image tag in Kubernetes manifests'"
+                    sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${branchName}"
+                }
+            }
+            sh "rm -rf ${cloneDir}"
                     }
                     }
 }}}
