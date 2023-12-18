@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: algabrizaid/maven-opa-docker-agent:latest-44
+        image: algabrizaid/maven-opa-docker-agent:latest-45
         ports:
         - containerPort: 8080
