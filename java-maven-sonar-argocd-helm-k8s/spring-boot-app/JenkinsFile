@@ -63,9 +63,9 @@ pipeline {
                     }
 
                    
-                    def manifestsDir = "spring-boot-app-manifests"
+                    def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
 
-                //  ${cloneDir}/
+                  
                     
                     def newImageLine = "image: ${registryName}:${imageTag}"
             
