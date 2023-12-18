@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: helloworld-service-app
+  name: spring-boot-app
   namespace: mciroservice-project
   labels:
     app: spring-boot-app
@@ -17,21 +17,21 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: algabrizaid/mysql-springboot-azure:latest-15
+        image: algabrizaid/mysql-springboot-azure:latest-
         ports:
-        - containerPort: 8081
+          - containerPort: 8081
         env:
 
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-               name: mysql-cm
-               key: hostname
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-cm
+                key: hostname
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: helloworld-service-app
+  name: spring-boot-app-service
   namespace: mciroservice-project
 
 spec:
@@ -43,8 +43,5 @@ spec:
     protocol: TCP
   selector:
     app: spring-boot-app
-
-
-
 
 
