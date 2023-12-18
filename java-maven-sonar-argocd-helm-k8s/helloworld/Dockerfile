@@ -3,7 +3,7 @@
 FROM adoptopenjdk/openjdk11:alpine-jre
 
 # Simply the artifact path
-ARG artifact=target/helloworld.jar
+ARG artifact=target/spring-boot-hello-world-1.0.jar
 
 WORKDIR /opt/app
 
