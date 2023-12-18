@@ -86,54 +86,10 @@ pipeline {
                     }
 }}}
 
-    // stage('Update Deployment File') {
-    //     environment {
-    //         GIT_REPO_NAME = "java-maven-sonar-argocd-helm-k8s"
-    //         GIT_USER_NAME = "zaidgabri"
-    //     }
-    //     steps {
-    //         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-    //             sh '''
-    //                 git config user.email "zaidgabri976@gmail.com"
-    //                 git config user.name "zaidgabri"
-    //                 BUILD_NUMBER=${imageTag}
-    //                 sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-    //                 git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-    //                 git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-    //                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-    //             '''
-    //         }
-    //     }
-    // }
 
 
 
-
-
-
-                 
-  //           //     // Checkout the branch (assuming it's 'main' - adjust if necessary)
-  //           //     sh 'git checkout main'
-
-  //           //     // Update the deployment file with the new image tag
-  //           //     sh '''
-  //           //         git config user.email "zaidgabri976@gmail.com"
-  //           //         git config user.name "zaidgabri"
-  //           //         BUILD_NUMBER=${BUILD_NUMBER}
-  //           //         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-  //           //         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-  //           //         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-  //           //         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
-  //           //     '''
-  //           // }
-  //           // sh "rm -rf ${cloneDir}"
-              
-            
-            
-  //       }
-  //   }
-  // }
-
+  
 
 
 
