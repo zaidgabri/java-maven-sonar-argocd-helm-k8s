@@ -61,12 +61,13 @@ stage('Update Deployment File') {
                 sh "git clone https://github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${cloneDir}"
             }
 
+
             // Checkout the specified branch
             sh "git checkout ${branchName}"
 
             def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
             def newImageLine = "image: ${registryName}:${imageTag}"
-
+            sh "git clean -xdf"
             sh "sed -i 's|image: algabrizaid/mysql-springboot-azure:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
 
             withCredentials([usernamePassword(credentialsId: 'git', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -74,7 +75,7 @@ stage('Update Deployment File') {
                     sh "git config user.email zaidgabri976@gmail.com"
                     sh "git config user.name zaidgabri"
                     sh "git add ."
-                     sh "git clean -xdf"
+
                     sh "git commit -m 'Update image tag in Kubernetes manifests'"
                     sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/zaidgabri/java-maven-sonar-argocd-helm-k8s.git ${branchName}"
                 }
