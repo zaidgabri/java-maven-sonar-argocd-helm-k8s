@@ -67,7 +67,7 @@ stage('Update Deployment File') {
 
             def manifestsDir = "${cloneDir}/spring-boot-app-manifests"
             def newImageLine = "image: ${registryName}:${imageTag}"
-            sh "git clean -xdf"
+           sh "git clean -xdf ${WORKSPACE}"
             sh "sed -i 's|image: algabrizaid/mysql-springboot-azure:latest.*|${newImageLine}|' ${manifestsDir}/deployment.yml"
 
             withCredentials([usernamePassword(credentialsId: 'git', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
